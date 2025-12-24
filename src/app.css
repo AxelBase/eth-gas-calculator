@@ -1,0 +1,55 @@
+/* src/app.css */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
+
+:root {
+  --fir-green: #31372B;
+  --fir-green-light: #444d3c;
+  --accent-soft: #f0f4ef;
+  --text-light: #ffffff;
+  --transition-smooth: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #fcfdfc;
+  font-family: 'Plus+Jakarta+Sans', sans-serif;
+  color: var(--fir-green);
+  margin: 0;
+  padding-top: 80px; /* Space for fixed nav */
+  padding-bottom: 80px; /* Space for fixed footer */
+}
+
+/* Bubbly Card Style */
+.card {
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(49, 55, 43, 0.08);
+  transition: var(--transition-smooth);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(49, 55, 43, 0.12);
+}
+
+/* Bubbly Inputs */
+.form-control {
+  border-radius: 15px;
+  padding: 12px 20px;
+  border: 2px solid #eee;
+  transition: var(--transition-smooth);
+}
+
+.form-control:focus {
+  border-color: var(--fir-green);
+  box-shadow: 0 0 0 4px rgba(49, 55, 43, 0.1);
+}
+
+/* Section placeholders */
+section {
+  padding: 80px 0;
+  border-bottom: 1px solid #eee;
+}

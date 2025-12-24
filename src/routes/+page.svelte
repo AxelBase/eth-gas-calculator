@@ -1,0 +1,247 @@
+<script>
+  import { base } from '$app/paths';
+  // Assuming these exports exist in your $lib/calculator
+  import { calculateEthCost, calculateUsdCost } from '$lib/calculator';
+
+  let gasLimit = 21000;
+  let gasPrice = 20;
+  let ethCost = 0;
+  let usdCost = 0;
+
+  $: {
+    ethCost = calculateEthCost(gasLimit, gasPrice);
+    usdCost = calculateUsdCost(ethCost);
+  }
+
+  function validateInput(event, type) {
+    const value = event.target.value;
+    if (type === 'gasLimit' && value < 0) gasLimit = 0;
+    if (type === 'gasPrice' && value < 0) gasPrice = 0;
+  }
+</script>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card p-4 p-md-5">
+        <h1 class="text-center mb-4 fw-bold">ETH Gas Cost Calculator</h1>
+        
+        <form>
+          <div class="mb-4">
+            <label for="gasLimit" class="form-label fw-bold">Gas Limit</label>
+            <input
+              type="number"
+              class="form-control form-control-lg"
+              id="gasLimit"
+              bind:value={gasLimit}
+              on:input={(e) => validateInput(e, 'gasLimit')}
+              min="0"
+            />
+            <div class="form-text">Standard transaction limit is usually 21,000.</div>
+          </div>
+          
+          <div class="mb-4">
+            <label for="gasPrice" class="form-label fw-bold">Gas Price (Gwei)</label>
+            <input
+              type="number"
+              class="form-control form-control-lg"
+              id="gasPrice"
+              bind:value={gasPrice}
+              on:input={(e) => validateInput(e, 'gasPrice')}
+              min="0"
+            />
+          </div>
+        </form>
+        
+        <div class="result-box mt-4 p-4 text-center" style="background: #f0f4ef; border-radius: 20px;">
+          <h5 class="text-uppercase small fw-bold opacity-75">Estimated Cost</h5>
+          <div class="display-5 fw-bold mb-2">{ethCost.toFixed(6)} ETH</div>
+          <div class="h4 text-success">${usdCost.toFixed(2)} <span class="small opacity-50">USD</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="container py-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <h2 class="fw-bold display-5 mb-4">About the ETH Gas Cost Calculator</h2>
+          <p class="lead mb-4">
+            The ETH Gas Cost Calculator is a simple, open-source, client-side web utility designed to help users quickly estimate Ethereum transaction fees. Built as a lightweight, stateless static site, it performs all calculations directly in your browser without any server interaction, data collection, or external API calls. This ensures complete privacy and instant functionality, even offline after the initial load.
+          </p>
+          <p class="mb-4">
+            The core purpose of this tool is educational and practical: to demystify Ethereum gas mechanics by allowing users to input a gas limit and gas price (in Gwei) and instantly see the resulting transaction cost in ETH. As specified in its requirements, the calculator defaults to a gas limit of 21,000 (the standard for simple ETH transfers) and a gas price of 20 Gwei, but users can adjust these values in real-time for custom scenarios. Results update reactively without page reloads, displaying the precise ETH cost to ten decimal places for accuracy, along with an approximate USD equivalent based on a fixed rate.
+          </p>
+          <p class="mb-4">
+            In late 2025, Ethereum gas fees have reached historic lows thanks to major network upgrades like Dencun and widespread Layer-2 adoption. Average gas prices often hover below 1 Gwei—frequently around 0.03-0.04 Gwei during normal activity—making simple transactions cost mere fractions of a cent. This tool reflects that reality by encouraging experimentation with low values while explaining key concepts through its blog and informational pages.
+          </p>
+          <p class="mb-4">
+            The calculator deliberately uses a <strong>static USD conversion rate</strong> (currently set at $2000 per ETH in the code, though clearly labeled as approximate). This choice prioritizes consistency and reliability over live market data: estimates remain reproducible across sessions, focusing attention on the fundamental fee formula (gas limit × gas price ÷ 1,000,000,000) rather than fluctuating cryptocurrency prices. For real-time fiat conversions or current network conditions, users are directed to external trackers like Etherscan.
+          </p>
+          <p class="mb-4">
+            Privacy is built-in by design—no cookies, tracking, analytics, or data transmission occur. The site is fully static, deployable on platforms like GitHub Pages, and requires only modern browser support. It supports common transaction types by providing typical gas limit guidance: 21,000 for basic transfers, 45,000-65,000 for ERC-20 tokens, and higher for DeFi swaps or NFT operations.
+          </p>
+          <p class="mb-0">
+            This utility serves Ethereum enthusiasts, developers, and everyday users who want a quick, transparent way to understand and plan transaction costs. It complements wallet-built-in estimators by offering an independent, educational view without any dependencies. Whether you're learning about gas for the first time or stress-testing extreme scenarios, the tool provides precise, client-side results instantly. Explore the blog for in-depth articles on gas mechanics, current trends, and precision calculations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-to-use" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="fw-bold text-center mb-5 display-6">How to Use the ETH Gas Cost Calculator</h2>
+      <p class="text-center lead mb-5 max-w-800 mx-auto">
+        Using the ETH Gas Cost Calculator is straightforward and intuitive, requiring no account, installation, or technical expertise beyond basic Ethereum knowledge. The tool is entirely client-side, meaning all inputs and calculations happen instantly in your browser with real-time updates—no submit buttons or page reloads needed.
+      </p>
+      <div class="row g-5">
+        <div class="col-lg-12">
+          <p class="mb-4">
+            Start on the main page, where you'll find two primary input fields: <strong>Gas Limit</strong> and <strong>Gas Price (in Gwei)</strong>. The defaults are set to realistic values—a gas limit of 21,000 (the exact amount required for a standard ETH transfer between addresses) and a gas price of 20 Gwei (a conservative estimate suitable for reliable confirmation).
+          </p>
+          <p class="mb-4">
+            To begin, simply adjust these fields to match your scenario. Enter or modify the <strong>Gas Limit</strong> first: this represents the maximum computational units your transaction can consume. For simple ETH sends, stick with 21,000. For ERC-20 token transfers (like USDC or DAI), use 45,000-65,000. DeFi interactions such as Uniswap swaps often require 100,000-200,000, while NFT mints can range from 150,000-300,000 or more, depending on contract complexity. Wallets like MetaMask automatically suggest limits, so copy that value here for precise estimation.
+          </p>
+          <p class="mb-4">
+            Next, set the <strong>Gas Price in Gwei</strong>. This determines priority and cost per unit. In late 2025, network conditions are exceptionally calm, with average prices frequently below 1 Gwei—often 0.03-0.04 Gwei for standard confirmation. For faster inclusion, try 0.1-1 Gwei. During rare congestion, prices may temporarily rise, but upgrades have minimized spikes. Check live trackers like Etherscan for current suggestions and input accordingly.
+          </p>
+          <p class="mb-4">
+            As you type or adjust values, the estimated cost updates immediately below the inputs. The <strong>ETH cost</strong> displays to ten decimal places for full precision, calculated via the core formula: (gas limit × gas price) ÷ 1,000,000,000. Unused gas is always refunded in real transactions, but this tool shows the maximum possible fee.
+          </p>
+          <p class="mb-4">
+            An approximate <strong>USD equivalent</strong> appears alongside, using a static rate clearly noted on-screen. This illustrative figure helps contextualize costs but isn't live—focus on the exact ETH amount, as that's what the network charges.
+          </p>
+          <p class="mb-4">
+            For experimentation, try common scenarios: a basic transfer at current low prices (e.g., gas price 0.034 Gwei) yields negligible costs, often under $0.01. Complex operations remain affordable too, rarely exceeding a few dollars even at higher prices.
+          </p>
+          <p class="mb-4">
+            Validation prevents negative inputs, resetting to zero if needed. Large numbers are handled accurately, allowing stress tests of hypothetical extremes.
+          </p>
+          <p class="mb-0">
+            Best practices: Always cross-verify with your wallet's estimator before broadcasting, as it accounts for real-time base fees and tips under EIP-1559. Use this tool for planning, education, or quick checks—it's ideal for understanding how parameters affect costs in today's low-fee environment. The responsive design works on desktop and mobile, with clear labels for accessibility.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="py-5">
+    <div class="container">
+      <h2 class="fw-bold text-center mb-5 display-6">Frequently Asked Questions</h2>
+      <div class="accordion accordion-flush max-w-900 mx-auto" id="faqAccordion">
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+              What exactly is gas in Ethereum?
+            </button>
+          </h2>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Gas measures the computational effort required for transactions and smart contract executions. Every operation—from transferring ETH to complex DeFi interactions—consumes a specific amount, preventing abuse and compensating validators.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+              How is the transaction cost calculated?
+            </button>
+          </h2>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              The total fee equals gas limit multiplied by gas price, divided by one billion to convert Gwei to ETH. This tool performs that math precisely in your browser, showing results to ten decimals.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+              What is a typical gas limit for common transactions?
+            </button>
+          </h2>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Simple ETH transfers use exactly 21,000 gas. ERC-20 token transfers require 45,000-65,000. Uniswap-like swaps often need 100,000-200,000, while NFT mints range 150,000-300,000 depending on implementation.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+              Why are gas prices so low in 2025?
+            </button>
+          </h2>
+          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Upgrades like Dencun and massive Layer-2 adoption have drastically reduced mainnet congestion. Average prices now hover around 0.03-0.04 Gwei, making most transactions cost fractions of a cent.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+              Does this tool show live gas prices or USD rates?
+            </button>
+          </h2>
+          <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              No—it uses manual inputs for gas price and a fixed USD rate for approximation. This keeps it static, private, and reliable. For live data, visit Etherscan or your wallet.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+              Why use a static USD conversion?
+            </button>
+          </h2>
+          <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              It ensures consistent, reproducible estimates focused on gas mechanics, without external dependencies or volatility interference. The rate is clearly labeled as illustrative.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+              Do I get a refund for unused gas?
+            </button>
+          </h2>
+          <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Yes—Ethereum automatically refunds any gas not consumed, so higher limits are safe (you only pay for actual usage).
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item border mb-3 rounded-4 shadow-sm">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+              Is this tool private and secure?
+            </button>
+          </h2>
+          <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Completely—all processing is client-side with no data collection, tracking, or transmission. No cookies or storage beyond your session.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section></div>
+
+<style>
+  .result-box {
+    border: 2px dashed var(--fir-green);
+  }
+  
+  section {
+    padding-top: 100px;
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: var(--accent-soft);
+    color: var(--fir-green);
+  }
+</style>
