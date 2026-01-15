@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://axelbase.github.io/eth-gas-calculator/sitemap.xml
+Sitemap: https://eth-gas-calculator.vercel.app/sitemap.xml
